@@ -1,0 +1,31 @@
+{{- range $component, $config := .Values }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ $.Chart.Name }}-{{ $config.type }}"
+spec:
+  replicas: {{ $config.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ $.Chart.Name }}-{{ $config.type }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ $.Chart.Name }}-{{ $config.type }}"
+    spec:
+      containers:
+        - name: "{{ $config.type }}"
+          image: "{{ $config.image }}:{{ $config.tag }}"
+          ports:
+            - containerPort: {{ $config.port }}
+          env:
+            {{- if $config.env }}
+            {{- range $key, $value := $config.env }}
+            - name: "{{ $key }}"
+              value: "{{ $value }}"
+            {{- end }}
+            {{- else }}
+            - name: "DEFAULT_ENV"
+              value: "default"
+            {{- end }}
+{{- end }}

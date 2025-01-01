@@ -1,0 +1,14 @@
+{{- range $key, $config := .Values }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ $config.name }}-{{ $config.type }}"
+spec:
+  selector:
+    app: "{{ $config.name }}-{{ $config.type }}"
+  ports:
+    - protocol: TCP
+      port: {{ $config.servicePort }}
+      targetPort: {{ $config.port }}
+  type: {{ $config.serviceType }}
+{{- end }}
